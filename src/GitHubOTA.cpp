@@ -51,10 +51,29 @@ void GitHubOTA::handle()
   const char *TAG = "handle";
   synchronize_system_time();
 
-  String base_url = _fetch_url_via_redirect ?
-    get_updated_base_url_via_redirect(_wifi_client, _release_url) :
-    get_updated_base_url_via_api(_wifi_client, _release_url);
-  ESP_LOGI(TAG, "base_url %s\n", base_url.c_str());
+  String base_url;
+  
+  if ( _fetch_url_via_redirect )
+  {
+    ESP_LOGI(TAG, "Get URL via redirect ...");
+    base_url = get_updated_base_url_via_redirect(_wifi_client, _release_url);
+  }
+  else
+  {
+    ESP_LOGI(TAG, "Get URL via (GitHub-)API ...");
+    base_url = get_updated_base_url_via_api(_wifi_client, _release_url);
+  }
+
+  if ( 0 == base_url.length() )
+  {
+    ESP_LOGE(TAG, "base URL of repository could NOT be retrieved! Bailing out ...\n");
+    delay(1000);
+
+    return;
+  }
+
+  ESP_LOGI(TAG, "base URL = %s\n", base_url.c_str());
+  delay(1000);
 
   auto last_slash = base_url.lastIndexOf('/', base_url.length() - 2);
   auto semver_str = base_url.substring(last_slash + 1);
@@ -67,6 +86,7 @@ void GitHubOTA::handle()
     if (result != HTTP_UPDATE_OK)
     {
       ESP_LOGI(TAG, "Update failed: %s\n", Updater.getLastErrorString().c_str());
+      
       return;
     }
 
@@ -78,7 +98,7 @@ void GitHubOTA::handle()
   ESP_LOGI(TAG, "No updates found\n");
 }
 
-HTTPUpdateResult GitHubOTA::update_firmware(String url)
+HTTPUpdateResult GitHubOTA::update_firmware(const String& url)
 {
   const char *TAG = "update_firmware";
   ESP_LOGI(TAG, "Download URL: %s\n", url.c_str());

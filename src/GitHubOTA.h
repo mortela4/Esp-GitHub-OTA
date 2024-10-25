@@ -29,7 +29,7 @@ private:
   HTTPUpdate Updater;
 #endif
 
-  HTTPUpdateResult update_firmware(String url);
+  HTTPUpdateResult update_firmware(const String& url);
 
   semver_t _version;
   String _release_url;

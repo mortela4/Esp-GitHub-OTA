@@ -79,7 +79,7 @@ void GitHubFsOTA::handle()
   ESP_LOGI(TAG, "No updates found\n");
 }
 
-HTTPUpdateResult GitHubFsOTA::update_filesystem(String url)
+HTTPUpdateResult GitHubFsOTA::update_filesystem(const String& url)
 {
   const char *TAG = "update_filesystem";
   ESP_LOGI(TAG, "Download URL: %s\n", url.c_str());
