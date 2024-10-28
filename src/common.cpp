@@ -130,7 +130,7 @@ String get_redirect_location(WiFiClientSecure& wifi_client, String initial_url)
   return redirect_url;
 }
 
-void print_update_result(const Updater& updater, const HTTPUpdateResult& result, const char *TAG)
+void print_update_result(Updater& updater, const HTTPUpdateResult& result, const char *TAG)
 {
   switch (result){
     case HTTP_UPDATE_FAILED:
