@@ -33,7 +33,11 @@ GitHubOTA::GitHubOTA(
   _x509.append(github_certificate);
   _wifi_client.setTrustAnchors(&_x509);
 #elif defined(ESP32)
+  #ifdef USE_INSECURE_GITHUB_CONNECTION
+  _wifi_client.setInsecure();                  // TODO: workaround - fix this later!!! (Why is CA-certificate failing???)
+  #else
   _wifi_client.setCACert(github_certificate);
+  #endif
 #endif
 
 #ifdef LED_BUILTIN
